@@ -1,0 +1,9 @@
+{
+	"name": "Pipeline1-DF",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "63882375-8f9c-4717-b353-ad62888ae875",
+		"tenantId": "c8042153-6a84-450b-98dc-a7f27ee42818"
+	}
+}
