@@ -17,6 +17,27 @@
 						"type": "DatasetReference"
 					},
 					"name": "StoreStream"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable1",
+						"type": "DatasetReference"
+					},
+					"name": "ProductStream"
+				},
+				{
+					"dataset": {
+						"referenceName": "prodModeldt",
+						"type": "DatasetReference"
+					},
+					"name": "ProductModelStream"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlprodsub",
+						"type": "DatasetReference"
+					},
+					"name": "ProductSubStream"
 				}
 			],
 			"sinks": [
@@ -26,6 +47,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "DimCustomerSynapse"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSynapseAnalyticsTable3",
+						"type": "DatasetReference"
+					},
+					"name": "DimProduct"
 				}
 			],
 			"transformations": [
@@ -37,6 +65,18 @@
 				},
 				{
 					"name": "RemoveNulls"
+				},
+				{
+					"name": "ProdJProdmodel"
+				},
+				{
+					"name": "ProdJoinSubcat"
+				},
+				{
+					"name": "selectColumnsProductdim"
+				},
+				{
+					"name": "alterRow1"
 				}
 			],
 			"scriptLines": [
@@ -65,6 +105,60 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> StoreStream",
+				"source(output(",
+				"          ProductID as integer,",
+				"          Name as string,",
+				"          ProductNumber as string,",
+				"          MakeFlag as boolean,",
+				"          FinishedGoodsFlag as boolean,",
+				"          Color as string,",
+				"          SafetyStockLevel as integer,",
+				"          ReorderPoint as integer,",
+				"          StandardCost as decimal(19,4),",
+				"          ListPrice as decimal(19,4),",
+				"          Size as string,",
+				"          SizeUnitMeasureCode as string,",
+				"          WeightUnitMeasureCode as string,",
+				"          Weight as decimal(8,2),",
+				"          DaysToManufacture as integer,",
+				"          ProductLine as string,",
+				"          Class as string,",
+				"          Style as string,",
+				"          ProductSubcategoryID as integer,",
+				"          ProductModelID as integer,",
+				"          SellStartDate as timestamp,",
+				"          SellEndDate as timestamp,",
+				"          DiscontinuedDate as timestamp,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> ProductStream",
+				"source(output(",
+				"          ProductModelID as integer,",
+				"          Name as string,",
+				"          CatalogDescription as string,",
+				"          Instructions as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> ProductModelStream",
+				"source(output(",
+				"          ProductSubcategoryID as integer,",
+				"          ProductCategoryID as integer,",
+				"          Name as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> ProductSubStream",
 				"CustomerStream, StoreStream join(StoreID == BusinessEntityID,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
@@ -74,11 +168,35 @@
 				"          CustomerID,",
 				"          StoreID,",
 				"          BusinessEntityID,",
-				"          Name",
+				"          StoreName = Name",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> selectColumns",
-				"selectColumns alterRow(deleteIf(isNull(BusinessEntityID))) ~> RemoveNulls",
+				"selectColumns alterRow(deleteIf(isNull(BusinessEntityID)),",
+				"     deleteIf(isNull(StoreName))) ~> RemoveNulls",
+				"ProductStream, ProductModelStream join(ProductStream@ProductModelID == ProductModelStream@ProductModelID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> ProdJProdmodel",
+				"ProdJProdmodel, ProductSubStream join(ProductStream@ProductSubcategoryID == ProductSubStream@ProductSubcategoryID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> ProdJoinSubcat",
+				"ProdJoinSubcat select(mapColumn(",
+				"          ProductID,",
+				"          ProductModelID = ProductStream@ProductModelID,",
+				"          ProductSubcategoryID = ProductStream@ProductSubcategoryID,",
+				"          ProductName = ProductStream@Name,",
+				"          SafetyStockLevel,",
+				"          ProductModelName = ProductModelStream@Name,",
+				"          ProductSubCategoryName = ProductSubStream@Name",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectColumnsProductdim",
+				"selectColumnsProductdim alterRow(deleteIf(isNull(ProductModelID)),",
+				"     deleteIf(isNull(ProductSubcategoryID))) ~> alterRow1",
 				"RemoveNulls sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -96,7 +214,28 @@
 				"     allowCopyCommand: true,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> DimCustomerSynapse"
+				"     errorHandlingOption: 'stopOnFirstError') ~> DimCustomerSynapse",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ProductID as integer,",
+				"          ProductModelID as integer,",
+				"          ProductSubcategoryID as integer,",
+				"          ProductName as string,",
+				"          SafetyStockLevel as integer,",
+				"          ProductModelName as string,",
+				"          ProductSubCategoryName as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     staged: true,",
+				"     allowCopyCommand: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> DimProduct"
 			]
 		}
 	}
