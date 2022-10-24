@@ -1,0 +1,103 @@
+{
+	"name": "DimCustomer",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CustomerDt",
+						"type": "DatasetReference"
+					},
+					"name": "CustomerStream"
+				},
+				{
+					"dataset": {
+						"referenceName": "StoreDt",
+						"type": "DatasetReference"
+					},
+					"name": "StoreStream"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSynapseAnalyticsTable2",
+						"type": "DatasetReference"
+					},
+					"name": "DimCustomerSynapse"
+				}
+			],
+			"transformations": [
+				{
+					"name": "CustomerjoinStore"
+				},
+				{
+					"name": "selectColumns"
+				},
+				{
+					"name": "RemoveNulls"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CustomerID as integer,",
+				"          PersonID as integer,",
+				"          StoreID as integer,",
+				"          TerritoryID as integer,",
+				"          AccountNumber as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> CustomerStream",
+				"source(output(",
+				"          BusinessEntityID as integer,",
+				"          Name as string,",
+				"          SalesPersonID as integer,",
+				"          Demographics as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> StoreStream",
+				"CustomerStream, StoreStream join(StoreID == BusinessEntityID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> CustomerjoinStore",
+				"CustomerjoinStore select(mapColumn(",
+				"          CustomerID,",
+				"          StoreID,",
+				"          BusinessEntityID,",
+				"          Name",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectColumns",
+				"selectColumns alterRow(deleteIf(isNull(BusinessEntityID))) ~> RemoveNulls",
+				"RemoveNulls sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          CustomerID as integer,",
+				"          StoreID as integer,",
+				"          BusinessEntityID as integer,",
+				"          StoreName as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     staged: true,",
+				"     allowCopyCommand: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> DimCustomerSynapse"
+			]
+		}
+	}
+}
