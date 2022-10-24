@@ -11,6 +11,12 @@
 		"AzureDataLakeStorage1_accountKey": {
 			"value": ""
 		},
+		"AzureSqlDatabase_AdvWorks_connectionString": {
+			"value": ""
+		},
+		"AzureSynapseAnalytics_connectionString": {
+			"value": ""
+		},
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"value": "https://mydatalakery123.dfs.core.windows.net/"
 		}
