@@ -99,6 +99,194 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase_AdvWorks",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ProductID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProductNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "MakeFlag",
+						"type": "bit"
+					},
+					{
+						"name": "FinishedGoodsFlag",
+						"type": "bit"
+					},
+					{
+						"name": "Color",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SafetyStockLevel",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "ReorderPoint",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "StandardCost",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "ListPrice",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "Size",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SizeUnitMeasureCode",
+						"type": "nchar"
+					},
+					{
+						"name": "WeightUnitMeasureCode",
+						"type": "nchar"
+					},
+					{
+						"name": "Weight",
+						"type": "decimal",
+						"precision": 8,
+						"scale": 2
+					},
+					{
+						"name": "DaysToManufacture",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductLine",
+						"type": "nchar"
+					},
+					{
+						"name": "Class",
+						"type": "nchar"
+					},
+					{
+						"name": "Style",
+						"type": "nchar"
+					},
+					{
+						"name": "ProductSubcategoryID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductModelID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SellStartDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "SellEndDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "DiscontinuedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "rowguid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "Production",
+					"table": "Product"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase_AdvWorks')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlprodsub')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase_AdvWorks",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ProductSubcategoryID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductCategoryID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "rowguid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "Production",
+					"table": "ProductSubcategory"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase_AdvWorks')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureSynapseAnalyticsTable1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -193,6 +381,60 @@
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "DimCustomer"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSynapseAnalytics')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSynapseAnalyticsTable3')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSynapseAnalytics",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "ProductID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductModelID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductSubcategoryID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductName",
+						"type": "varchar"
+					},
+					{
+						"name": "SafetyStockLevel",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "ProductModelName",
+						"type": "varchar"
+					},
+					{
+						"name": "ProductSubCategoryName",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "DimProduct"
 				}
 			},
 			"dependsOn": [
@@ -385,6 +627,55 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/prodModeldt')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase_AdvWorks",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ProductModelID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CatalogDescription",
+						"type": "xml"
+					},
+					{
+						"name": "Instructions",
+						"type": "xml"
+					},
+					{
+						"name": "rowguid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "Production",
+					"table": "ProductModel"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase_AdvWorks')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/salesHeaderTable')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -558,6 +849,27 @@
 								"type": "DatasetReference"
 							},
 							"name": "StoreStream"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable1",
+								"type": "DatasetReference"
+							},
+							"name": "ProductStream"
+						},
+						{
+							"dataset": {
+								"referenceName": "prodModeldt",
+								"type": "DatasetReference"
+							},
+							"name": "ProductModelStream"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlprodsub",
+								"type": "DatasetReference"
+							},
+							"name": "ProductSubStream"
 						}
 					],
 					"sinks": [
@@ -567,6 +879,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "DimCustomerSynapse"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSynapseAnalyticsTable3",
+								"type": "DatasetReference"
+							},
+							"name": "DimProduct"
 						}
 					],
 					"transformations": [
@@ -578,6 +897,18 @@
 						},
 						{
 							"name": "RemoveNulls"
+						},
+						{
+							"name": "ProdJProdmodel"
+						},
+						{
+							"name": "ProdJoinSubcat"
+						},
+						{
+							"name": "selectColumnsProductdim"
+						},
+						{
+							"name": "alterRow1"
 						}
 					],
 					"scriptLines": [
@@ -606,6 +937,60 @@
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table') ~> StoreStream",
+						"source(output(",
+						"          ProductID as integer,",
+						"          Name as string,",
+						"          ProductNumber as string,",
+						"          MakeFlag as boolean,",
+						"          FinishedGoodsFlag as boolean,",
+						"          Color as string,",
+						"          SafetyStockLevel as integer,",
+						"          ReorderPoint as integer,",
+						"          StandardCost as decimal(19,4),",
+						"          ListPrice as decimal(19,4),",
+						"          Size as string,",
+						"          SizeUnitMeasureCode as string,",
+						"          WeightUnitMeasureCode as string,",
+						"          Weight as decimal(8,2),",
+						"          DaysToManufacture as integer,",
+						"          ProductLine as string,",
+						"          Class as string,",
+						"          Style as string,",
+						"          ProductSubcategoryID as integer,",
+						"          ProductModelID as integer,",
+						"          SellStartDate as timestamp,",
+						"          SellEndDate as timestamp,",
+						"          DiscontinuedDate as timestamp,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> ProductStream",
+						"source(output(",
+						"          ProductModelID as integer,",
+						"          Name as string,",
+						"          CatalogDescription as string,",
+						"          Instructions as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> ProductModelStream",
+						"source(output(",
+						"          ProductSubcategoryID as integer,",
+						"          ProductCategoryID as integer,",
+						"          Name as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> ProductSubStream",
 						"CustomerStream, StoreStream join(StoreID == BusinessEntityID,",
 						"     joinType:'left',",
 						"     matchType:'exact',",
@@ -615,11 +1000,35 @@
 						"          CustomerID,",
 						"          StoreID,",
 						"          BusinessEntityID,",
-						"          Name",
+						"          StoreName = Name",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> selectColumns",
-						"selectColumns alterRow(deleteIf(isNull(BusinessEntityID))) ~> RemoveNulls",
+						"selectColumns alterRow(deleteIf(isNull(BusinessEntityID)),",
+						"     deleteIf(isNull(StoreName))) ~> RemoveNulls",
+						"ProductStream, ProductModelStream join(ProductStream@ProductModelID == ProductModelStream@ProductModelID,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> ProdJProdmodel",
+						"ProdJProdmodel, ProductSubStream join(ProductStream@ProductSubcategoryID == ProductSubStream@ProductSubcategoryID,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> ProdJoinSubcat",
+						"ProdJoinSubcat select(mapColumn(",
+						"          ProductID,",
+						"          ProductModelID = ProductStream@ProductModelID,",
+						"          ProductSubcategoryID = ProductStream@ProductSubcategoryID,",
+						"          ProductName = ProductStream@Name,",
+						"          SafetyStockLevel,",
+						"          ProductModelName = ProductModelStream@Name,",
+						"          ProductSubCategoryName = ProductSubStream@Name",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> selectColumnsProductdim",
+						"selectColumnsProductdim alterRow(deleteIf(isNull(ProductModelID)),",
+						"     deleteIf(isNull(ProductSubcategoryID))) ~> alterRow1",
 						"RemoveNulls sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
@@ -637,14 +1046,39 @@
 						"     allowCopyCommand: true,",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> DimCustomerSynapse"
+						"     errorHandlingOption: 'stopOnFirstError') ~> DimCustomerSynapse",
+						"alterRow1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          ProductID as integer,",
+						"          ProductModelID as integer,",
+						"          ProductSubcategoryID as integer,",
+						"          ProductName as string,",
+						"          SafetyStockLevel as integer,",
+						"          ProductModelName as string,",
+						"          ProductSubCategoryName as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     staged: true,",
+						"     allowCopyCommand: true,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> DimProduct"
 					]
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/CustomerDt')]",
 				"[concat(variables('factoryId'), '/datasets/StoreDt')]",
-				"[concat(variables('factoryId'), '/datasets/AzureSynapseAnalyticsTable2')]"
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
+				"[concat(variables('factoryId'), '/datasets/prodModeldt')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlprodsub')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSynapseAnalyticsTable2')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSynapseAnalyticsTable3')]"
 			]
 		},
 		{
@@ -804,7 +1238,11 @@
 								"datasetParameters": {
 									"CustomerStream": {},
 									"StoreStream": {},
-									"DimCustomerSynapse": {}
+									"ProductStream": {},
+									"ProductModelStream": {},
+									"ProductSubStream": {},
+									"DimCustomerSynapse": {},
+									"DimProduct": {}
 								}
 							},
 							"staging": {
