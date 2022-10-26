@@ -5,26 +5,14 @@
 		"typeProperties": {
 			"sources": [
 				{
-					"dataset": {
-						"referenceName": "SalesOrderDetailDT",
-						"type": "DatasetReference"
-					},
 					"name": "SalesOrderDetailStream"
 				},
 				{
-					"dataset": {
-						"referenceName": "salesHeaderTable",
-						"type": "DatasetReference"
-					},
 					"name": "SalesOredrHeaderStream"
 				}
 			],
 			"sinks": [
 				{
-					"dataset": {
-						"referenceName": "AzureSynapseAnalyticsTable1",
-						"type": "DatasetReference"
-					},
 					"name": "SalesFactSink"
 				}
 			],
@@ -48,9 +36,7 @@
 				"          ModifiedDate as timestamp",
 				"     ),",
 				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> SalesOrderDetailStream",
+				"     validateSchema: false) ~> SalesOrderDetailStream",
 				"source(output(",
 				"          SalesOrderID as integer,",
 				"          RevisionNumber as integer,",
@@ -80,9 +66,7 @@
 				"          ModifiedDate as timestamp",
 				"     ),",
 				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> SalesOredrHeaderStream",
+				"     validateSchema: false) ~> SalesOredrHeaderStream",
 				"SalesOrderDetailStream, SalesOredrHeaderStream join(SalesOrderDetailStream@SalesOrderID == SalesOredrHeaderStream@SalesOrderID,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
@@ -90,25 +74,8 @@
 				"     broadcast: 'auto')~> join1",
 				"join1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     input(",
-				"          ProductID as integer,",
-				"          SalesOrderID as integer,",
-				"          CustomerID as integer,",
-				"          OrderQty as integer,",
-				"          UnitPrice as decimal(19,4),",
-				"          OrderDate as timestamp,",
-				"          TaxAmt as decimal(19,4)",
-				"     ),",
-				"     deletable:false,",
-				"     insertable:true,",
-				"     updateable:false,",
-				"     upsertable:false,",
-				"     format: 'table',",
-				"     staged: true,",
-				"     allowCopyCommand: true,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError',",
 				"     mapColumn(",
 				"          ProductID,",
 				"          SalesOrderID = SalesOrderDetailStream@SalesOrderID,",
@@ -117,7 +84,8 @@
 				"          UnitPrice,",
 				"          OrderDate,",
 				"          TaxAmt",
-				"     )) ~> SalesFactSink"
+				"     ),",
+				"     format: 'table') ~> SalesFactSink"
 			]
 		}
 	}

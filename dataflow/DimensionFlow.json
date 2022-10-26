@@ -5,54 +5,26 @@
 		"typeProperties": {
 			"sources": [
 				{
-					"dataset": {
-						"referenceName": "CustomerDt",
-						"type": "DatasetReference"
-					},
 					"name": "CustomerStream"
 				},
 				{
-					"dataset": {
-						"referenceName": "StoreDt",
-						"type": "DatasetReference"
-					},
 					"name": "StoreStream"
 				},
 				{
-					"dataset": {
-						"referenceName": "AzureSqlTable1",
-						"type": "DatasetReference"
-					},
 					"name": "ProductStream"
 				},
 				{
-					"dataset": {
-						"referenceName": "prodModeldt",
-						"type": "DatasetReference"
-					},
 					"name": "ProductModelStream"
 				},
 				{
-					"dataset": {
-						"referenceName": "AzureSqlprodsub",
-						"type": "DatasetReference"
-					},
 					"name": "ProductSubStream"
 				}
 			],
 			"sinks": [
 				{
-					"dataset": {
-						"referenceName": "AzureSynapseAnalyticsTable2",
-						"type": "DatasetReference"
-					},
 					"name": "DimCustomerSynapse"
 				},
 				{
-					"dataset": {
-						"referenceName": "AzureSynapseAnalyticsTable3",
-						"type": "DatasetReference"
-					},
 					"name": "DimProduct"
 				}
 			],
@@ -90,9 +62,7 @@
 				"          ModifiedDate as timestamp",
 				"     ),",
 				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> CustomerStream",
+				"     validateSchema: false) ~> CustomerStream",
 				"source(output(",
 				"          BusinessEntityID as integer,",
 				"          Name as string,",
@@ -102,9 +72,7 @@
 				"          ModifiedDate as timestamp",
 				"     ),",
 				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> StoreStream",
+				"     validateSchema: false) ~> StoreStream",
 				"source(output(",
 				"          ProductID as integer,",
 				"          Name as string,",
@@ -133,9 +101,7 @@
 				"          ModifiedDate as timestamp",
 				"     ),",
 				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> ProductStream",
+				"     validateSchema: false) ~> ProductStream",
 				"source(output(",
 				"          ProductModelID as integer,",
 				"          Name as string,",
@@ -145,9 +111,7 @@
 				"          ModifiedDate as timestamp",
 				"     ),",
 				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> ProductModelStream",
+				"     validateSchema: false) ~> ProductModelStream",
 				"source(output(",
 				"          ProductSubcategoryID as integer,",
 				"          ProductCategoryID as integer,",
@@ -156,9 +120,7 @@
 				"          ModifiedDate as timestamp",
 				"     ),",
 				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> ProductSubStream",
+				"     validateSchema: false) ~> ProductSubStream",
 				"CustomerStream, StoreStream join(StoreID == BusinessEntityID,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
@@ -199,43 +161,14 @@
 				"     deleteIf(isNull(ProductSubcategoryID))) ~> alterRow1",
 				"RemoveNulls sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     input(",
-				"          CustomerID as integer,",
-				"          StoreID as integer,",
-				"          BusinessEntityID as integer,",
-				"          StoreName as string",
-				"     ),",
-				"     deletable:false,",
-				"     insertable:true,",
-				"     updateable:false,",
-				"     upsertable:false,",
-				"     format: 'table',",
-				"     staged: true,",
-				"     allowCopyCommand: true,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> DimCustomerSynapse",
+				"     format: 'table') ~> DimCustomerSynapse",
 				"alterRow1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     input(",
-				"          ProductID as integer,",
-				"          ProductModelID as integer,",
-				"          ProductSubcategoryID as integer,",
-				"          ProductName as string,",
-				"          SafetyStockLevel as integer,",
-				"          ProductModelName as string,",
-				"          ProductSubCategoryName as string",
-				"     ),",
-				"     deletable:false,",
-				"     insertable:true,",
-				"     updateable:false,",
-				"     upsertable:false,",
-				"     format: 'table',",
-				"     staged: true,",
-				"     allowCopyCommand: true,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> DimProduct"
+				"     format: 'table') ~> DimProduct"
 			]
 		}
 	}
