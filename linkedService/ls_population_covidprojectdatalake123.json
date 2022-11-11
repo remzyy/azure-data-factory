@@ -1,0 +1,12 @@
+{
+	"name": "ls_population_covidprojectdatalake123",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://covidprojectdatalake123.dfs.core.windows.net/",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDA5NTQyNzhFLTIzRkQtNDU1Ri1BQTlCLTg3NTAwRTE1OThDMl85NDQzZDc5Ni0wZDFiLTQ1M2UtOTIyMi0zOTE3MmQzODQ0MWEiDQp9"
+		}
+	}
+}

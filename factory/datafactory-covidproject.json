@@ -1,0 +1,9 @@
+{
+	"name": "datafactory-covidproject",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "38ffaec8-7ee8-404b-ad5a-6b5782617723",
+		"tenantId": "c8042153-6a84-450b-98dc-a7f27ee42818"
+	}
+}
