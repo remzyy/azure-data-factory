@@ -19,7 +19,15 @@
 					"name": "countrylookup"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_processed_cases_and_deaths",
+						"type": "DatasetReference"
+					},
+					"name": "casendeathsink"
+				}
+			],
 			"transformations": [
 				{
 					"name": "filteronlyeurope"
@@ -29,6 +37,12 @@
 				},
 				{
 					"name": "PivotCounts"
+				},
+				{
+					"name": "Lookupcountry"
+				},
+				{
+					"name": "selectfinalcolumn"
 				}
 			],
 			"scriptLines": [
@@ -74,12 +88,34 @@
 				"          country_code,",
 				"          population,",
 				"          source,",
-				"          reported_date,",
-				"          {} = ERROR_FUNCTION('')),",
-				"     pivotBy(indicator),",
+				"          reported_date),",
+				"     pivotBy(indicator, ['confirmed cases', 'deaths']),",
 				"     count = sum(daily_count),",
 				"     columnNaming: '$N_$V',",
-				"     lateral: true) ~> PivotCounts"
+				"     lateral: true) ~> PivotCounts",
+				"PivotCounts, countrylookup lookup(PivotCounts@country == countrylookup@country,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> Lookupcountry",
+				"Lookupcountry select(mapColumn(",
+				"          country = PivotCounts@country,",
+				"          country_code_2_digit,",
+				"          country_code_3_digit,",
+				"          population = PivotCounts@population,",
+				"          {count_confirmed cases},",
+				"          count_deaths,",
+				"          reported_date,",
+				"          source",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectfinalcolumn",
+				"selectfinalcolumn sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> casendeathsink"
 			]
 		}
 	}
