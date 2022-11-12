@@ -1,0 +1,23 @@
+{
+	"name": "ds_Weekly_hosp_admission_processed",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_population_covidprojectdatalake123",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "ecdc/weeklyhospadmission.csv",
+				"fileSystem": "processed"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
